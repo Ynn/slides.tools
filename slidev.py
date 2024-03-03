@@ -118,12 +118,18 @@ def slidev_export(filename) :
     command = ["npx","slidev", "export", "slides/"+filename, "--format", "pdf", "--output", f"slides/{os.path.splitext(filename)[0]}"]
     slidev(dirname, command)
 
+def slidev_spa(filename) :
+    dirname,filename = get_dirname_filename(filename)
+    command = ["npx","slidev", "build", "slides/"+filename]
+    slidev(dirname, command)
+
 
 def main() :
     parser = argparse.ArgumentParser(description="Build and optionally run a Docker image")
     parser.add_argument("-b", "--build", action="store_true", help="Build the Docker image")
     parser.add_argument("-r", "--run", help="File to compile")
     parser.add_argument("-e", "--export", help="Export the file to pdf")
+    parser.add_argument("-s", "--spa", help="Export the file to pdf")
     parser.add_argument("--makebin", action="store_true", help="Make a binary of this docker script")
     
     args = parser.parse_args()
@@ -151,9 +157,13 @@ def main() :
         
     if args.run :
         slidev_run(args.run)
+        sys.exit(0)
     if args.export :
         slidev_export(args.export)
-
+        sys.exit(0)
+    if args.spa :
+        slidev_spa(args.spa)
+        sys.exit(0)
 if __name__ == "__main__":
     main()
 
