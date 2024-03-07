@@ -1,26 +1,102 @@
-name: Build and Compress Docker Image
+name: Build Docker Image and Executables
 on:
   push:
     tags:
       - '*'
   workflow_dispatch:
+
 jobs:
-  build:
+  build_docker_image:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Extract version from Python file
-      id: extract_version
-      run: |
-        VERSION=$(grep 'VERSION = ' slidev.py | awk '{print $3}' | tr -d '"')
-        echo "Extracted version: $VERSION"
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag nnynn/slidev:$VERSION
-    - name: Save Docker image
-      run: docker save nnynn/slidev:$VERSION | xz -z -T0 - > slidev.tar.xz
-    - name: Upload Compressed Image
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: compressed-docker-image
-        path: ./slidev.tar.xz
+      - uses: actions/checkout@v3
+      - name: Extract version from Python file
+        run: |
+          VERSION=$(grep 'VERSION = ' slidev.py | awk '{print $3}' | tr -d '"')
+          echo "Extracted version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag nnynn/slidev:$VERSION
+      - name: Save Docker image
+        run: docker save nnynn/slidev:$VERSION | xz -z -T0 - > slidev.tar.xz
+      - name: Upload Compressed Image
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: compressed-docker-image
+          path: ./slidev.tar.xz
+
+  build_windows_executable:
+    needs: build_docker_image
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Python Dependencies
+        run: pip install -r requirements.txt
+      - name: Build Python Executable
+        run: python slidev.py --makebin
+      - name: Upload Executable as Artifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: slidev-executable-windows
+          path: ./dist/slidev.exe
+
+  build_linux_executable:
+    needs: build_docker_image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Python Dependencies
+        run: pip install -r requirements.txt
+      - name: Build Python Executable
+        run: python slidev.py --makebin
+      - name: Upload Executable as Artifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: slidev-executable-linux
+          path: ./dist/slidev
+
+  create_release_and_upload_assets:
+    needs: [build_windows_executable, build_linux_executable]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          body: "Slides tools release"
+      
+      - name: Upload Windows Executable as Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/slidev.exe
+          asset_name: slidev.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux Executable as Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/slidev
+          asset_name: slidev
+          asset_content_type: application/octet-stream
+
+          
