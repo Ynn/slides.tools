@@ -66,6 +66,11 @@ jobs:
     needs: [build_windows_executable]
     runs-on: ubuntu-latest
     steps:
+      - name: Extract version from Python file
+        run: |
+          VERSION=$(grep 'VERSION = ' slidev.py | awk '{print $3}' | tr -d '"')
+          echo "Extracted version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
       - name: Create Release
@@ -74,8 +79,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: $VERSION
+          release_name: Release $VERSION
           draft: false
           prerelease: false
           body: "Slides tools release"
