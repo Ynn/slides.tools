@@ -3,6 +3,12 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch: 
+    inputs:
+      tag_name:
+        description: 'Tag Name (leave blank to use latest)'
+        required: false
+        default: 'latest'
 jobs:
   build:
     runs-on: ubuntu-latest
