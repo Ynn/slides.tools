@@ -1,4 +1,4 @@
-name: Build Python Executable
+name: Build Windows Executable
 
 on:
   workflow_run:
