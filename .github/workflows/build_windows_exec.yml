@@ -3,13 +3,13 @@ name: Build Windows Executable
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Build and Compress Docker Image"] # Nom du premier workflow
+    workflows: ["Build and Compress Docker Image"]
     types:
       - completed
 
 jobs:
   build_executable:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
