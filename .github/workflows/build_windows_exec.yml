@@ -1,6 +1,7 @@
 name: Build Windows Executable
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["Build and Compress Docker Image"] # Nom du premier workflow
     types:
