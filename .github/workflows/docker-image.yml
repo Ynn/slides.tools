@@ -75,7 +75,7 @@ jobs:
         uses: actions/download-artifact@v4
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "slide, slide.exe"
+          artifacts: "slidev, slidev.exe"
           omitBody: true
           tag: $VERSION
           commit: "main"
