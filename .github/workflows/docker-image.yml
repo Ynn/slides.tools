@@ -12,7 +12,9 @@ jobs:
     - name: Extract version from Python file
       id: extract_version
       run: |
-        echo "VERSION=$(python -c 'from slidev import VERSION; print(VERSION)')" >> $GITHUB_ENV
+        VERSION=$(grep 'VERSION = ' slidev.py | awk '{print $3}' | tr -d '"')
+        echo "Extracted version: $VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag nnynn/slidev:$VERSION
     - name: Save Docker image
