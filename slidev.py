@@ -8,6 +8,7 @@ import lzma
 import time
 import subprocess
 import argparse
+import os
 
 VERSION = "1-0.48.0-beta.1"
 IMAGE_NAME = "nnynn/slidev"
@@ -196,8 +197,3 @@ def main() :
         sys.exit(0)
 if __name__ == "__main__":
     main()
-
-
-        
-
-  
