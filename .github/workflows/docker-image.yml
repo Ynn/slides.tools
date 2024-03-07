@@ -14,13 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Extract tag name
-      id: get_tag
-      run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+    - name: Determine Tag Name
+      id: tag_name
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "TAG_NAME=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
+        else
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        fi
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag nnynn/slidev:${{ steps.get_tag.outputs.TAG }}
+      run: docker build . --file Dockerfile --tag nnynn/slidev:$TAG_NAME
     - name: Save Docker image
-      run: docker save nnynn/slidev:${{ steps.get_tag.outputs.TAG }} | xz -z -T0 - > slidev.tar.xz
+      run: docker save nnynn/slidev:$TAG_NAME | xz -z -T0 - > slidev.tar.xz
     - name: Upload Compressed Image
       uses: actions/upload-artifact@v4.3.1     
       with:
