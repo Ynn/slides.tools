@@ -104,6 +104,10 @@ You can customize the Dockerfile as needed. Remember to update the `VERSION` con
 - `--makebin`: Create a standalone executable.
 - `--compress`: Apply PDF compression.
 
+## Maintenance and Updates
+
+Please note, there are no plans to keep this project routinely updated with the latest versions of Slidev. It was developed to address a specific need at a particular point in time. As such, the project might not reflect the most recent advancements in Slidev or related technologies. Should you require an up-to-date version or wish to contribute to its development, you are encouraged to fork this project and implement any necessary updates or improvements.
+
 ## Future Enhancements
 
 - Implement rootless execution to improve security.
