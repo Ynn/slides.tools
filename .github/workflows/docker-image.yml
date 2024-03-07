@@ -73,36 +73,12 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ncipollo/release-action@v1
         with:
-          tag_name: $VERSION
-          release_name: Release $VERSION
-          draft: false
-          prerelease: false
-          body: "Slides tools release"
-      
-      - name: Upload Windows Executable as Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: slidev.exe
-          asset_name: slidev.exe
-          asset_content_type: application/octet-stream
-
-      - name: Upload Linux Executable as Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: slidev
-          asset_name: slidev
-          asset_content_type: application/octet-stream
+          artifacts: "slide, slide.exe"
+          omitBody: true
+          tag: $VERSION
+          commit: "main"
+    
 
           
