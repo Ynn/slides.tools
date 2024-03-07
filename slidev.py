@@ -118,18 +118,22 @@ def get_dirname_filename(filename):
 def slidev_run(filename, args) :
     dirname,filename = get_dirname_filename(filename)
     command = ["npx","slidev", "slides/"+filename, "--remote"]
-    if args.tunnel :
-        command.append("--tunnel")
     slidev(dirname, command)
 
 def slidev_export(filename, args) :
     dirname,filename = get_dirname_filename(filename)
-    command = ["npx","slidev", "export", "slides/"+filename, "--format", "pdf", "--output", f"slides/{os.path.splitext(filename)[0]}"]
+    command = ["npx","slidev", "export", "slides/"+filename, "--format", "pdf", "--output", f"slides/{os.path.splitext(filename)[0]}.pdf"]
     if args.with_clicks :
         command.append("--with-clicks")
     if args.with_toc :
         command.append("--with-toc")
+    if args.timeout :
+        command.append("--timeout")
+        command.append(args.timeout)
     slidev(dirname, command)
+    if args.compress :
+        command = ["gs", "-sDEVICE=pdfwrite", "-dCompatibilityLevel=1.4", "-dPDFSETTINGS=/printer", "-dNOPAUSE", "-dQUIET", "-dBATCH", "-sOutputFile=slides/"+os.path.splitext(filename)[0]+"-compressed.pdf", "slides/"+os.path.splitext(filename)[0]+".pdf"]
+        slidev(dirname,command)
 
 def slidev_spa(filename, args) :
     dirname,filename = get_dirname_filename(filename)
@@ -138,7 +142,6 @@ def slidev_spa(filename, args) :
         command.append("--with-clicks")
     if args.with_toc :
         command.append("--with-toc")
-    
     slidev(dirname, command)
 
 
@@ -149,11 +152,12 @@ def main() :
     parser.add_argument("-r", "--run", help="File to compile")
     parser.add_argument("-e", "--export", help="Export the file to pdf")
     parser.add_argument("-c", "--with-clicks",action="store_true", help="Export pages for every clicks")
-    parser.add_argument("-t", "--tunnel",action="store_true", help="open a Cloudflare Quick Tunnel to make Slidev available on the internet")
+    parser.add_argument("-t", "--timeout", help="timeout for the export")
     parser.add_argument("-s", "--spa", help="Export the file to single web application")
     parser.add_argument("--with-toc",action="store_true", help="Export pages with outline ")
     parser.add_argument("--makebin", action="store_true", help="Make a binary of this docker script and image")
-    
+    parser.add_argument("--compress", action="store_true", help="Compress the pdf with ghostscript")
+
     args = parser.parse_args()
 
     docker_context_path = base_path()

@@ -21,3 +21,4 @@ RUN npm install --production @slidev/cli@0.48.0-beta.1 \
 
 COPY theme-nnynn/slidev-theme-nnynn-0.25.0.tgz .
 RUN npm install --production slidev-theme-nnynn-0.25.0.tgz
+RUN apt update && apt install -y ghostscript && rm -rf /var/lib/apt/lists/*
