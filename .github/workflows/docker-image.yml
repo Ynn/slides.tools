@@ -3,32 +3,22 @@ on:
   push:
     tags:
       - '*'
-  workflow_dispatch: 
-    inputs:
-      tag_name:
-        description: 'Tag Name (leave blank to use latest)'
-        required: false
-        default: 'latest'
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Determine Tag Name
-      id: tag_name
+    - name: Extract version from Python file
+      id: extract_version
       run: |
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          echo "TAG_NAME=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
-        else
-          TAG_NAME="${GITHUB_REF#refs/tags/}"
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        fi
+        echo "VERSION=$(python -c 'from slidev import VERSION; print(VERSION)')" >> $GITHUB_ENV
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag nnynn/slidev:$TAG_NAME
+      run: docker build . --file Dockerfile --tag nnynn/slidev:$VERSION
     - name: Save Docker image
-      run: docker save nnynn/slidev:$TAG_NAME | xz -z -T0 - > slidev.tar.xz
+      run: docker save nnynn/slidev:$VERSION | xz -z -T0 - > slidev.tar.xz
     - name: Upload Compressed Image
-      uses: actions/upload-artifact@v4.3.1     
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: compressed-docker-image
         path: ./slidev.tar.xz
