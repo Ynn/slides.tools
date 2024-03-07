@@ -86,7 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/slidev.exe
+          asset_path: slidev.exe
           asset_name: slidev.exe
           asset_content_type: application/octet-stream
 
@@ -96,7 +96,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/slidev
+          asset_path: slidev
           asset_name: slidev
           asset_content_type: application/octet-stream
 
