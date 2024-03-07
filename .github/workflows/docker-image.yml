@@ -17,4 +17,4 @@ jobs:
       uses: actions/upload-artifact@v4.3.1     
       with:
         name: compressed-docker-image
-        path: ./your-image-name.tar.xz
+        path: ./slidev.tar.xz
