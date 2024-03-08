@@ -75,9 +75,9 @@ jobs:
         uses: actions/download-artifact@v4
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "slidev, slidev.exe"
+          artifacts: "slidev-executable-linux/slidev, slidev-executable-windows/slidev.exe"
           omitBody: true
-          tag: $VERSION
+          tag: ${{ env.VERSION }}          
           commit: "main"
     
 
