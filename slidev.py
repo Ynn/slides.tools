@@ -10,7 +10,7 @@ import subprocess
 import argparse
 import os
 
-VERSION = "1-0.48.0-beta.1"
+VERSION = "1-0.48.0-beta.24"
 IMAGE_NAME = "nnynn/slidev"
 TAGGED_IMAGE_NAME = f"nnynn/slidev:{VERSION}"
 IMAGE_FILENAME = "slidev"
