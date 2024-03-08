@@ -66,6 +66,7 @@ jobs:
     needs: [build_windows_executable]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Extract version from Python file
         run: |
           VERSION=$(grep 'VERSION = ' slidev.py | awk '{print $3}' | tr -d '"')
