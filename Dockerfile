@@ -1,14 +1,20 @@
 FROM node:20-slim
 
+
 USER root
+RUN apt update && apt install -y ghostscript && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /slidev
-RUN npx playwright@1.41.2 install-deps chromium && npm i -D playwright-chromium@1.41.2 --with-deps \
+RUN npx playwright@1.41.2 install-deps chromium  \
     && rm -fr /root/.cache/ms-playwright/chromium*/chrome-linux/locales \
     && rm -fr /root/.npm \
-    && rm -rf /usr/lib/x86_64-linux-gnu/dri
+    && rm -rf /usr/lib/x86_64-linux-gnu/dri \
+    && chown -R node:node /slidev
 
-RUN npm install --production @slidev/cli@0.48.0-beta.24 \ 
+USER node
+
+RUN npm i -D playwright-chromium@1.41.2 --with-deps
+RUN npm install --production @slidev/cli@0.48.0-beta.26 \ 
                             @slidev/theme-seriph@0.25.0 \
                             @slidev/theme-default@0.25.0 \
                             @slidev/theme-apple-basic@0.25.0 \
@@ -21,4 +27,4 @@ RUN npm install --production @slidev/cli@0.48.0-beta.24 \
 
 COPY theme-nnynn/slidev-theme-nnynn-0.25.0.tgz .
 RUN npm install --production slidev-theme-nnynn-0.25.0.tgz
-RUN apt update && apt install -y ghostscript && rm -rf /var/lib/apt/lists/*
+WORKDIR /slidev/slides
