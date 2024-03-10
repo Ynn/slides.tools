@@ -14,7 +14,7 @@ RUN npx playwright@1.41.2 install-deps chromium  \
 USER node
 
 RUN npm i -D playwright-chromium@1.41.2 --with-deps
-RUN npm install --production @slidev/cli@0.48.0-beta.26 \ 
+RUN npm install --production @slidev/cli@0.48.1 \ 
                             @slidev/theme-seriph@0.25.0 \
                             @slidev/theme-default@0.25.0 \
                             @slidev/theme-apple-basic@0.25.0 \

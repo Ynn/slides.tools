@@ -12,7 +12,7 @@ from docker.models.containers import Container
 from docker.models.images import Image
 from typing import List
 
-VERSION = "1-0.48.0-beta.26"
+VERSION = "1-0.48.1"
 IMAGE_NAME = "nnynn/slidev"
 TAGGED_IMAGE_NAME = f"nnynn/slidev:{VERSION}"
 IMAGE_FILENAME = "slidev"
