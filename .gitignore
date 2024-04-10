@@ -317,7 +317,11 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,windows,linux,macos,emacs
 
-
-slidev.tar
-slidev.tar.xz
+**/*.zst
+**/*.tar
+**/*.tar.xz
 test/export.pdf
+slidev*.exe
+**/*.exe
+slidev
+slidev-dkr

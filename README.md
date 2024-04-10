@@ -9,56 +9,49 @@ This implementation was crafted to fulfill a personal requirement. It may not be
 ## Prerequisites
 
 - Docker installed on your system
-- Python 3.x (for building the executable)
+- Go installed on your system
 
 ## Getting Started
 
-### Setting Up Your Environment
-
-First, clone the repository and set up a Python virtual environment:
-
-```shell
-python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-pip install -r requirements.txt
-```
+### Building
 
 ### Building the Slidev Docker Image
 
-Generate the Docker image containing Slidev and all necessary tools:
+Generate the Docker image containing Slidev and all necessary tools.
+
+
+Build and compress the docker image (optionnal, only if you want to embed the image). You can change the dependencies in package.json and Dockerfile if needed (also change the version number) :
 
 ```shell
-python slidev.py -b # builds the docker image
+go run . build_docker -c
 ```
 
-### Creating an Executable
+This create an archive in `./image` folder
 
-Create a standalone executable for your operating system:
+Build the executable :
 
 ```shell
-python slidev.py --makebin # generates the binary
+go build
 ```
 
-Locate the generated executable within the `dist` directory. Add it to your system's PATH for easy access.
+The docker image is embed if is contained in `./image` folder
 
-### Testing Your Setup
-
-Run a test presentation to verify the installation:
+Test with :
 
 ```shell
-dist/slidev test/slides.md
+.\slidev-dkr.exe run .\test\slides.md
 ```
 
 ## Usage
 
-The `slidev` command provides a simplified interface for common Slidev operations, differing from the standard Slidev CLI.
+The `slidev-dkr` command provides a simplified interface for common Slidev operations, differing from the standard Slidev CLI.
 
 ### Running a Presentation
 
 Serve a presentation locally on port 3030:
 
 ```shell
-slidev -r <path_to_your_file>/myfile.md
+slidev-dkr run <path_to_your_file>/myfile.md
 ```
 
 ### Exporting Presentations
@@ -66,20 +59,37 @@ slidev -r <path_to_your_file>/myfile.md
 #### To PDF
 
 ```shell
-slidev -e <path_to_your_file>/myfile.md
+slidev export <path_to_your_file>/myfile.md
 ```
+
+Flags:
++ -g, --compress         Compress the pdf with ghostscript
++ --timeout string   timeout for the export (default "60000")
++ -c, --with-clicks      Export pages for every clicks
++ -t, --with-toc         Export pages with outline
+
+
 
 For additional PDF options, including table of contents and compression:
 
 ```shell
-slidev -e <path_to_your_file>/myfile.md --with-toc -c --compress
+slidev export <path_to_your_file>/myfile.md -gct
 ```
+
+
 
 #### As a Single Page Application (SPA)
 
 ```shell
-slidev -s <path_to_your_file>/myfile.md
+slidev-dkr spa <path_to_your_file>/myfile.md
+# or
+slidev-dkr build <path_to_your_file>/myfile.md
 ```
+
+Flags:
++ -b, --base string   To deploy your slides under sub-routes, you will need to pass the --base option. The --base path must begin and end with a slash / (default "/")
++ -d, --download      Provide Downloadable PDF
++ -h, --help          help for spa
 
 ## Dockerfile Configuration
 
@@ -89,20 +99,30 @@ The Dockerfile includes:
 - Playwright for PDF exports
 - Ghostscript for PDF compression
 
-You can customize the Dockerfile as needed. Remember to update the `VERSION` constant in `slidev.py` to reflect changes in the Docker image. The `VERSION` format is `{SCRIPT_VERSION}-{SLIDEV_VERSION}`, serving as the Docker image tag.
+You can customize the Dockerfile and the package.json as needed. Remember to update the `version` constant in `package.sjon` to reflect changes in the Docker image.
 
-## Command Reference
+## Référence
 
-- `-v`, `--version`: Display the script version.
-- `-b`, `--build`: Build the Docker image.
-- `-r`, `--run`: Serve the specified Markdown file.
-- `-e`, `--export`: Export to PDF.
-- `-c`, `--with-clicks`: Include click-triggered pages in exports.
-- `-t`, `--timeout`: Specify a timeout for exports.
-- `-s`, `--spa`: Export as a Single Page Application.
-- `--with-toc`: Include a table of contents in exports.
-- `--makebin`: Create a standalone executable.
-- `--compress`: Apply PDF compression.
+```shell
+Slidev in a container
+
+Usage:
+  slidev-dkr [command]
+
+Available Commands:
+  build_docker    Build the docker image
+  completion      Generate the autocompletion script for the specified shell
+  compress_docker Compress the image and store it in image/slidev.tar.xst to be embedded in the binary when building     
+  export          Export the slidev presentation to a pdf
+  help            Help about any command
+  run             Run slidev on the current file
+  spa             Export the slidev presentation to a Single Page Application
+  version         Current version of the script and slidev
+
+Flags:
+  -h, --help   help for slidev-dkr
+```
+
 
 ## Maintenance and Updates
 
