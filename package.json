@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Slidev dependecies in dockerfile",
     "dependencies": {
-      "@slidev/cli": "0.48.8",
+      "@slidev/cli": "51.4.0",
       "@slidev/theme-seriph": "0.25.0",
       "@slidev/theme-default": "0.25.0",
       "@slidev/theme-apple-basic": "0.25.0",
